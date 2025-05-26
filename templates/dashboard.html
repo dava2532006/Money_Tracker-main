@@ -2,53 +2,173 @@
 <html>
 <head>
     <title>Dashboard Keuangan</title>
+    <style>
+        /* Reset margin dan padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px 40px;
+            background-color: #f7f9fc;
+            color: #2c3e50;
+        }
+
+        a {
+            color: #2980b9;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: inline-block;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #1c5980;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700;
+            color: #34495e;
+        }
+
+        p {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        strong {
+            color: #16a085;
+        }
+
+        h2 {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #16a085;
+            padding-bottom: 5px;
+            color: #27ae60;
+        }
+
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin: 12px 0 6px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1.5px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus, input[type="number"]:focus, input[type="text"]:focus {
+            border-color: #16a085;
+            outline: none;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 18px;
+            background-color: #16a085;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 700;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #13856e;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            background: white;
+            margin-bottom: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 0.95em;
+            color: #34495e;
+        }
+
+        ul li:nth-child(odd) {
+            background-color: #ecf0f1;
+        }
+    </style>
 </head>
-<a href="{{ url_for('cari_transaksi') }}">🔍 Cari Transaksi</a>
 <body>
-    <h1>Money Treacker</h1>
+    <a href="{{ url_for('cari_transaksi') }}">🔍 Cari Transaksi</a>
+    <h1>Money Tracker</h1>
     <p><strong>Saldo:</strong> Rp {{ saldo }}</p>
     <p><strong>Total Pemasukan:</strong> Rp {{ pemasukan }}</p>
     <p><strong>Total Pengeluaran:</strong> Rp {{ pengeluaran }}</p>
 
     <h2>Tambah Transaksi</h2>
     <form method="POST" action="{{ url_for('tambah_transaksi') }}">
-        <label>Tipe:</label>
-        <select name="tipe">
+        <label for="tipe">Tipe:</label>
+        <select name="tipe" id="tipe">
             <option value="masuk">Pemasukan</option>
             <option value="keluar">Pengeluaran</option>
-        </select><br>
-        <label>Kategori:</label>
-        <label for="kategori">Kategori:</label>
-    <select name="kategori" id="kategori">
-    <option value="">-- Pilih Kategori --</option>
-    <option value="makanan">Makanan</option>
-    <option value="pakaian">Pakaian</option>
-    <option value="kesehatan">Kesehatan</option>
-    <option value="lainnya">Kost</option>
-    <option value="transportasi">Transportasi</option>
-    <option value="hiburan">Hiburan</option>
-    <option value="pendidikan">Pendidikan</option>
-    <option value="gaji">Gaji</option>
-    <option value="tabungan">Tabungan</option>  
-    <option value="kesehatan">Lainnya</option>
+        </select>
 
-</select><br>
-        <label>Jumlah (Rp):</label>
-        <input type="number" name="jumlah"><br>
-        <label>Keterangan:</label>
-        <input type="text" name="keterangan"><br>
+        <label for="kategori">Kategori:</label>
+        <select name="kategori" id="kategori">
+            <option value="">-- Pilih Kategori --</option>
+            <option value="makanan">Makanan</option>
+            <option value="pakaian">Pakaian</option>
+            <option value="kesehatan">Kesehatan</option>
+            <option value="lainnya">Kost</option>
+            <option value="transportasi">Transportasi</option>
+            <option value="hiburan">Hiburan</option>
+            <option value="pendidikan">Pendidikan</option>
+            <option value="gaji">Gaji</option>
+            <option value="tabungan">Tabungan</option>  
+            <option value="kesehatan">Lainnya</option>
+        </select>
+
+        <label for="jumlah">Jumlah (Rp):</label>
+        <input type="number" name="jumlah" id="jumlah" required>
+
+        <label for="keterangan">Keterangan:</label>
+        <input type="text" name="keterangan" id="keterangan">
+
         <button type="submit">Simpan</button>
     </form>
 
     <h2>Riwayat Transaksi</h2>
     <a href="{{ url_for('riwayat_transaksi') }}">Lihat Riwayat Transaksi →</a>
-    <a href="/riwayat">Lihat Riwayat</a>
     <ul>
         {% for t in riwayat %}
-    <li>
-      {{ t.tanggal }} | {{ t.kategori }} | {{ t.tipe }} | Rp{{ t.jumlah }} | {{ t.keterangan }}
-    </li>
-         {% endfor %}
-</ul>
+            <li>
+                {{ t.tanggal }} | {{ t.kategori }} | {{ t.tipe }} | Rp{{ t.jumlah }} | {{ t.keterangan }}
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
