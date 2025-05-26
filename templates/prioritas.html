@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Alokasi Prioritas Keuangan</title>
+</head>
+<body>
+    <h2>Atur Alokasi Prioritas Keuangan</h2>
+
+    <form method="POST">
+        <table border="1" cellpadding="8">
+            <tr>
+                <th>Kategori</th>
+                <th>Persentase (%)</th>
+            </tr>
+            {% for item in data %}
+            <tr>
+                <td>
+                    <input type="text" name="kategori" value="{{ item.kategori }}" required>
+                </td>
+                <td>
+                    <input type="number" name="persentase" value="{{ item.persentase }}" min="0" max="100" required>
+                </td>
+            </tr>
+            {% endfor %}
+
+            <!-- Input kosong untuk tambahan baru -->
+            <tr>
+                <td><input type="text" name="kategori" placeholder="Kategori Baru"></td>
+                <td><input type="number" name="persentase" placeholder="%" min="0" max="100"></td>
+            </tr>
+        </table>
+
+        <br>
+        <button type="submit">Simpan Prioritas</button>
+    </form>
+
+    <br>
+    <a href="{{ url_for('dashboard') }}">← Kembali ke Dashboard</a>
+</body>
+</html>

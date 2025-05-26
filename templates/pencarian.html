@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cari Transaksi</title>
+</head>
+<body>
+    <h1>Cari Transaksi</h1>
+   <form method="get" action="{{ url_for('cari_transaksi') }}">
+    <input type="text" name="q" placeholder="Cari kategori atau keterangan" value="{{ keyword }}">
+    <button type="submit">Cari</button>
+    </form>
+       
+
+    {% if hasil %}
+        <ul>
+        {% for t in hasil %}
+            <li>
+                [{{ t.tanggal.strftime('%d-%m-%Y') }}] Rp {{ "{:,.0f}".format(t.jumlah) }} -
+                {{ t.tipe }} | {{ t.kategori }}
+                {% if t.keterangan %}
+                    - {{ t.keterangan }}
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% elif keyword %}
+        <p><em>Tidak ada hasil untuk: "{{ keyword }}"</em></p>
+    {% endif %}
+
+    <a href="{{ url_for('dashboard') }}">← Kembali ke Dashboard</a>
+</body>
+</html>

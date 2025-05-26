@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Riwayat Transaksi</title>
+</head>
+<body>
+    <h1>Riwayat Transaksi</h1>
+    <a href="{{ url_for('dashboard') }}">← Kembali ke Dashboard</a>
+    <ul>
+        {% for t in data %}
+            <li>
+                <strong>[{{ t.tanggal.strftime('%d-%m-%Y') }}]</strong>
+                <span>Rp {{ "{:,.0f}".format(t.jumlah) }}</span>
+                - {{ t.tipe|capitalize }} | Kategori: {{ t.kategori }}
+                {% if t.tipe == 'keluar' %}
+                    - Untuk: <em>{{ t.keterangan }}</em>
+                {% else %}
+                    {% if t.keterangan %}
+                        - Catatan: <em>{{ t.keterangan }}</em>
+                    {% endif %}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

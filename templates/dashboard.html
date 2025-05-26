@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Keuangan</title>
+</head>
+<a href="{{ url_for('cari_transaksi') }}">🔍 Cari Transaksi</a>
+<body>
+    <h1>Money Treacker</h1>
+    <p><strong>Saldo:</strong> Rp {{ saldo }}</p>
+    <p><strong>Total Pemasukan:</strong> Rp {{ pemasukan }}</p>
+    <p><strong>Total Pengeluaran:</strong> Rp {{ pengeluaran }}</p>
+
+    <h2>Tambah Transaksi</h2>
+    <form method="POST" action="{{ url_for('tambah_transaksi') }}">
+        <label>Tipe:</label>
+        <select name="tipe">
+            <option value="masuk">Pemasukan</option>
+            <option value="keluar">Pengeluaran</option>
+        </select><br>
+        <label>Kategori:</label>
+        <label for="kategori">Kategori:</label>
+    <select name="kategori" id="kategori">
+    <option value="">-- Pilih Kategori --</option>
+    <option value="makanan">Makanan</option>
+    <option value="pakaian">Pakaian</option>
+    <option value="kesehatan">Kesehatan</option>
+    <option value="lainnya">Kost</option>
+    <option value="transportasi">Transportasi</option>
+    <option value="hiburan">Hiburan</option>
+    <option value="pendidikan">Pendidikan</option>
+    <option value="gaji">Gaji</option>
+    <option value="tabungan">Tabungan</option>  
+    <option value="kesehatan">Lainnya</option>
+
+</select><br>
+        <label>Jumlah (Rp):</label>
+        <input type="number" name="jumlah"><br>
+        <label>Keterangan:</label>
+        <input type="text" name="keterangan"><br>
+        <button type="submit">Simpan</button>
+    </form>
+
+    <h2>Riwayat Transaksi</h2>
+    <a href="{{ url_for('riwayat_transaksi') }}">Lihat Riwayat Transaksi →</a>
+    <a href="/riwayat">Lihat Riwayat</a>
+    <ul>
+        {% for t in riwayat %}
+    <li>
+      {{ t.tanggal }} | {{ t.kategori }} | {{ t.tipe }} | Rp{{ t.jumlah }} | {{ t.keterangan }}
+    </li>
+         {% endfor %}
+</ul>
+</body>
+</html>
