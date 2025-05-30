@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 from flask import request, redirect, url_for
 from sqlalchemy import or_
-
+from models.prioritas import Prioritas
 from models.transaksi import Transaksi
 import os
 
