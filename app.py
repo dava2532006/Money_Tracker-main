@@ -4,6 +4,7 @@ from sqlalchemy import or_
 from models.prioritas import Prioritas
 from models.transaksi import Transaksi
 import os
+import heapq
 
 from extensions import db
 
@@ -71,9 +72,53 @@ def detail_kategori():
     ).all()
     return render_template('kategori.html', hasil=hasil)
 
+@app.route('/atur-prioritas', methods=['GET', 'POST'])
+def atur_prioritas():
+    if request.method == 'POST':
+        Prioritas.query.delete()
+
+        total_persen = 0
+        i = 1
+        while f'kategori_{i}' in request.form:
+            kategori = request.form.get(f'kategori_{i}')
+            persen = int(request.form.get(f'persen_{i}') or 0)
+            if kategori and persen > 0:
+                db.session.add(Prioritas(kategori=kategori, persentase=persen))
+                total_persen += persen
+            i += 1
+
+        kategori_new = request.form.get('kategori_new')
+        persen_new = request.form.get('persen_new')
+        if kategori_new and persen_new:
+            persen_new = int(persen_new)
+            db.session.add(Prioritas(kategori=kategori_new, persentase=persen_new))
+            total_persen += persen_new
+
+        if total_persen > 100:
+            db.session.rollback()
+            return "Error: Total persentase melebihi 100%!", 400
+
+        db.session.commit()
+        return redirect(url_for('atur_prioritas'))
+
+    data = Prioritas.query.order_by(Prioritas.persentase.desc()).all()
+    return render_template('atur_prioritas.html', data=data)
 
 
+@app.route('/prioritas')
+def atur_Prioritas():
+    saldo = Transaksi.get_saldo()
+    alokasi_list = Prioritas.query.order_by(Prioritas.persentase.desc()).all()
 
+    hasil_alokasi = []
+    for a in alokasi_list:
+        nominal = saldo * (a.persentase / 100)
+        hasil_alokasi.append({
+            "kategori": a.kategori,
+            "persen": a.persentase,
+            "jumlah": round(nominal, 2)
+        })
+    return render_template('prioritas.html', hasil_alokasi=hasil_alokasi, saldo=saldo)
 
 
 
@@ -81,4 +126,3 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
-    

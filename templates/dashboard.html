@@ -2,8 +2,8 @@
 <html>
 <head>
     <title>Dashboard Keuangan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        /* Reset margin dan padding */
         * {
             margin: 0;
             padding: 0;
@@ -11,164 +11,559 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px 40px;
-            background-color: #f7f9fc;
-            color: #2c3e50;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
         }
 
-        a {
-            color: #2980b9;
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .header {
+            padding: 30px 25px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .search-link {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
             text-decoration: none;
+            font-size: 20px;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .search-link:hover {
+            opacity: 1;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            margin: 20px;
+            padding: 25px 20px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .balance-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .balance-amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 0 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #f8f9ff;
+            padding: 20px 15px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #e8ecf4;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .income-icon {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .expense-icon {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .stat-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .priority-section {
+            padding: 0 20px;
+            margin-bottom: 25px;
+        }
+
+        .priority-header {
+            background: linear-gradient(90deg, #d4a574 0%, #c19c66 100%);
+            color: white;
+            padding: 12px 15px;
+            border-radius: 12px;
+            font-size: 14px;
             font-weight: 600;
             margin-bottom: 15px;
-            display: inline-block;
-            transition: color 0.3s ease;
         }
 
-        a:hover {
-            color: #1c5980;
+        .priority-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
         }
 
-        h1 {
+        .priority-item {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 15px 10px;
             text-align: center;
-            margin-bottom: 30px;
-            font-weight: 700;
-            color: #34495e;
+            border: 1px solid #e8ecf4;
         }
 
-        p {
-            font-size: 1.1em;
-            margin-bottom: 10px;
-        }
-
-        strong {
-            color: #16a085;
-        }
-
-        h2 {
-            margin-top: 40px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #16a085;
-            padding-bottom: 5px;
-            color: #27ae60;
-        }
-
-        form {
-            background-color: white;
-            padding: 20px;
+        .priority-icon {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
             border-radius: 10px;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
         }
 
-        label {
-            display: block;
-            margin: 12px 0 6px;
-            font-weight: 600;
-            color: #34495e;
+        .recent-section {
+            padding: 0 20px;
+            margin-bottom: 100px;
         }
 
-        select, input[type="number"], input[type="text"] {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1.5px solid #bdc3c7;
-            border-radius: 6px;
-            font-size: 1em;
-            transition: border-color 0.3s ease;
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
         }
 
-        select:focus, input[type="number"]:focus, input[type="text"]:focus {
-            border-color: #16a085;
-            outline: none;
-        }
-
-        button {
-            margin-top: 20px;
-            padding: 10px 18px;
-            background-color: #16a085;
-            border: none;
-            border-radius: 8px;
-            color: white;
+        .section-title {
+            font-size: 18px;
             font-weight: 700;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+            color: #333;
         }
 
-        button:hover {
-            background-color: #13856e;
+        .see-all {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
         }
 
-        ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        ul li {
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
             background: white;
-            margin-bottom: 12px;
-            padding: 12px 16px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            font-size: 0.95em;
-            color: #34495e;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #f0f0f0;
         }
 
-        ul li:nth-child(odd) {
-            background-color: #ecf0f1;
+        .transaction-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .shopping-icon {
+            background: linear-gradient(135deg, #ffa726 0%, #ff7043 100%);
+        }
+
+        .subscription-icon {
+            background: linear-gradient(135deg, #7986cb 0%, #3f51b5 100%);
+        }
+
+        .transaction-info {
+            flex: 1;
+        }
+
+        .transaction-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .transaction-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .transaction-right {
+            text-align: right;
+        }
+
+        .transaction-amount {
+            font-size: 16px;
+            font-weight: 700;
+            color: #e74c3c;
+            margin-bottom: 2px;
+        }
+
+        .transaction-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            max-width: 100%;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 25px 25px 0 0;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: #999;
+            text-decoration: none;
+            font-size: 12px;
+            transition: color 0.3s;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .add-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
+            transition: transform 0.3s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .form-section {
+            padding: 20px;
+            background: #f8f9ff;
+            margin: 20px;
+            border-radius: 15px;
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .form-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .allocation-table {
+            margin: 20px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .table-header {
+            background: #f8f9ff;
+            padding: 15px;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 1px solid #e8ecf4;
+        }
+
+        .allocation-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .allocation-row:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+            
+            .bottom-nav {
+                width: 100%;
+                border-radius: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <a href="{{ url_for('cari_transaksi') }}">🔍 Cari Transaksi</a>
-    <h1>Money Tracker</h1>
-    <p><strong>Saldo:</strong> Rp {{ saldo }}</p>
-    <p><strong>Total Pemasukan:</strong> Rp {{ pemasukan }}</p>
-    <p><strong>Total Pengeluaran:</strong> Rp {{ pengeluaran }}</p>
+    <div class="container">
+        <div class="header">
+            <a href="{{ url_for('cari_transaksi') }}" class="search-link">🔍</a>
+            <h1 style="font-size: 24px; font-weight: 700; margin: 0;">Money Tracker</h1>
+        </div>
 
-    <h2>Tambah Transaksi</h2>
-    <form method="POST" action="{{ url_for('tambah_transaksi') }}">
-        <label for="tipe">Tipe:</label>
-        <select name="tipe" id="tipe">
-            <option value="masuk">Pemasukan</option>
-            <option value="keluar">Pengeluaran</option>
-        </select>
+        <div class="balance-card">
+            <div class="balance-label">Available Balance</div>
+            <div class="balance-amount">${{ "%.2f"|format(saldo/15000) }}</div>
+        </div>
 
-        <label for="kategori">Kategori:</label>
-        <select name="kategori" id="kategori">
-            <option value="">-- Pilih Kategori --</option>
-            <option value="makanan">Makanan</option>
-            <option value="pakaian">Pakaian</option>
-            <option value="kesehatan">Kesehatan</option>
-            <option value="lainnya">Kost</option>
-            <option value="transportasi">Transportasi</option>
-            <option value="hiburan">Hiburan</option>
-            <option value="pendidikan">Pendidikan</option>
-            <option value="gaji">Gaji</option>
-            <option value="tabungan">Tabungan</option>  
-            <option value="kesehatan">Lainnya</option>
-        </select>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon income-icon">💰</div>
+                <div class="stat-label">Income</div>
+                <div class="stat-amount">${{ "%.0f"|format(pemasukan/15000) }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon expense-icon">💸</div>
+                <div class="stat-label">Expenses</div>
+                <div class="stat-amount">${{ "%.0f"|format(pengeluaran/15000) }}</div>
+            </div>
+        </div>
 
-        <label for="jumlah">Jumlah (Rp):</label>
-        <input type="number" name="jumlah" id="jumlah" required>
+        <div class="priority-section">
+            <div class="priority-header">Your Priority Expenses</div>
+            <div class="priority-grid">
+                <div class="priority-item">
+                    <div class="priority-icon">🏠</div>
+                </div>
+                <div class="priority-item">
+                    <div class="priority-icon">🍕</div>
+                </div>
+                <div class="priority-item">
+                    <div class="priority-icon">🚗</div>
+                </div>
+                <div class="priority-item">
+                    <div class="priority-icon">🎮</div>
+                </div>
+            </div>
+        </div>
 
-        <label for="keterangan">Keterangan:</label>
-        <input type="text" name="keterangan" id="keterangan">
+        <div class="recent-section">
+            <div class="section-header">
+                <div class="section-title">Recent Transaction</div>
+                <a href="{{ url_for('riwayat_transaksi') }}" class="see-all">See All</a>
+            </div>
 
-        <button type="submit">Simpan</button>
-    </form>
+            {% for t in riwayat[:2] %}
+            <div class="transaction-item">
+                <div class="transaction-icon {% if t.kategori == 'makanan' %}shopping-icon{% else %}subscription-icon{% endif %}">
+                    {% if t.kategori == 'makanan' %}🛒{% else %}📱{% endif %}
+                </div>
+                <div class="transaction-info">
+                    <div class="transaction-name">{{ t.kategori|title }}</div>
+                    <div class="transaction-desc">{{ t.keterangan or 'No description' }}</div>
+                </div>
+                <div class="transaction-right">
+                    <div class="transaction-amount">-${{ "%.0f"|format(t.jumlah/15000) }}</div>
+                    <div class="transaction-time">{{ t.tanggal }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
 
-    <h2>Riwayat Transaksi</h2>
-    <a href="{{ url_for('riwayat_transaksi') }}">Lihat Riwayat Transaksi →</a>
-    <ul>
-        {% for t in riwayat %}
-            <li>
-                {{ t.tanggal }} | {{ t.kategori }} | {{ t.tipe }} | Rp{{ t.jumlah }} | {{ t.keterangan }}
-            </li>
-        {% endfor %}
-    </ul>
+        <!-- Form Section (Hidden by default) -->
+        <div class="form-section" id="addTransactionForm">
+            <div class="form-title">Add Transaction</div>
+            <form method="POST" action="{{ url_for('tambah_transaksi') }}">
+                <div class="form-group">
+                    <label class="form-label" for="tipe">Type:</label>
+                    <select name="tipe" id="tipe" class="form-select">
+                        <option value="masuk">Income</option>
+                        <option value="keluar">Expense</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="kategori">Category:</label>
+                    <select name="kategori" id="kategori" class="form-select">
+                        <option value="">-- Select Category --</option>
+                        <option value="makanan">Food</option>
+                        <option value="pakaian">Clothing</option>
+                        <option value="kesehatan">Health</option>
+                        <option value="lainnya">Rent</option>
+                        <option value="transportasi">Transportation</option>
+                        <option value="hiburan">Entertainment</option>
+                        <option value="pendidikan">Education</option>
+                        <option value="gaji">Salary</option>
+                        <option value="tabungan">Savings</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="jumlah">Amount ($):</label>
+                    <input type="number" name="jumlah" id="jumlah" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="keterangan">Description:</label>
+                    <input type="text" name="keterangan" id="keterangan" class="form-input">
+                </div>
+
+                <button type="submit" class="submit-btn">Save Transaction</button>
+            </form>
+        </div>
+
+        <!-- Allocation Table -->
+        {% if alokasi %}
+        <div class="allocation-table">
+            <div class="table-header">Budget Allocation</div>
+            {% for a in alokasi %}
+            <div class="allocation-row">
+                <span>{{ a.kategori|title }}</span>
+                <span>{{ a.persen }}%</span>
+                <span>${{ "%.0f"|format(a.jumlah/15000) }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="#" class="nav-item active">
+            <span class="nav-icon">🏠</span>
+            Home
+        </a>
+        <a href="{{ url_for('riwayat_transaksi') }}" " class="nav-item">
+            <span class="nav-icon">🔄</span>
+            History
+        </a>
+        <button class="add-btn" onclick="toggleForm()">+</button>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">📊</span>
+            Reports
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">⚙️</span>
+            Settings
+        </a>
+    </div>
+
+    <script>
+        function toggleForm() {
+            const form = document.getElementById('addTransactionForm');
+            form.classList.toggle('active');
+        }
+
+        // Auto-hide form after submission
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success')) {
+            // Hide form if transaction was successful
+            document.getElementById('addTransactionForm').classList.remove('active');
+        }
+    </script>
 </body>
 </html>
