@@ -73,39 +73,23 @@ def detail_kategori():
     return render_template('kategori.html', hasil=hasil)
 
 @app.route('/atur-prioritas', methods=['GET', 'POST'])
-def atur_prioritas():
+def input_prioritas():
     if request.method == 'POST':
         Prioritas.query.delete()
 
-        total_persen = 0
-        i = 1
-        while f'kategori_{i}' in request.form:
-            kategori = request.form.get(f'kategori_{i}')
-            persen = int(request.form.get(f'persen_{i}') or 0)
-            if kategori and persen > 0:
-                db.session.add(Prioritas(kategori=kategori, persentase=persen))
-                total_persen += persen
-            i += 1
+        kategori = request.form.get('kategori')
+        persen = int(request.form.get('persentase') or 0)
 
-        kategori_new = request.form.get('kategori_new')
-        persen_new = request.form.get('persen_new')
-        if kategori_new and persen_new:
-            persen_new = int(persen_new)
-            db.session.add(Prioritas(kategori=kategori_new, persentase=persen_new))
-            total_persen += persen_new
-
-        if total_persen > 100:
-            db.session.rollback()
-            return "Error: Total persentase melebihi 100%!", 400
-
-        db.session.commit()
-        return redirect(url_for('atur_prioritas'))
+        if kategori and persen > 0:
+            db.session.add(Prioritas(kategori=kategori, persentase=persen))
+            db.session.commit()
+            return redirect(url_for('input_prioritas'))
 
     data = Prioritas.query.order_by(Prioritas.persentase.desc()).all()
     return render_template('atur_prioritas.html', data=data)
+ 
 
-
-@app.route('/prioritas')
+@app.route('/prioritas', methods=['GET'])
 def atur_Prioritas():
     saldo = Transaksi.get_saldo()
     alokasi_list = Prioritas.query.order_by(Prioritas.persentase.desc()).all()

@@ -1,58 +1,150 @@
-{% extends 'dashboard.html' %}
-{% block content %}
-<h2 class="text-xl font-bold mb-4">Atur Prioritas Keuangan</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prioritas Pengeluaran</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            color: rgb(0, 0, 0);
+        }
 
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class="mb-4">
-      {% for message in messages %}
-        <li class="bg-yellow-100 text-yellow-800 p-2 rounded">{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
 
-<form method="POST">
-  <div class="space-y-4">
-    {% for i, item in enumerate(data, start=1) %}
-    <div class="grid grid-cols-2 gap-4">
-      <input type="text" name="kategori_{{ i }}" value="{{ item.kategori }}" placeholder="Kategori" class="border p-2 rounded w-full" required>
-      <input type="number" name="persen_{{ i }}" value="{{ item.persentase }}" min="0" max="100" class="border p-2 rounded w-full" required>
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input[type="number"]:focus {
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #764ba2;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+
+        .priority-list {
+            margin-top: 30px;
+        }
+
+        .priority-item {
+            background: #f8f9ff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            color: #333;
+        }
+
+        .priority-item span {
+            font-weight: 500;
+        }
+
+        .priority-level {
+            background: #e0e7ff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #764ba2;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="{{ url_for('dashboard') }}" class="back-button">
+                🏠 Home
+            </a>
+            <h1>Prioritas Pengeluaran</h1>
+        </div>
+        <form method="POST" action="{{ url_for('input_prioritas') }}">
+            <div class="form-group">
+                <label for="kategori">Kategori:</label>
+                <select name="kategori" id="kategori" required>
+                    <option value="">-- Pilih Kategori --</option>
+                    <option value="makanan">Makanan</option>
+                    <option value="transportasi">Transportasi</option>
+                    <option value="sewa">Sewa</option>
+                    <option value="hiburan">Hiburan</option>
+                    <option value="kesehatan">Kesehatan</option>
+                    <option value="pendidikan">Pendidikan</option>
+                    <option value="tabungan">Tabungan</option>
+                    <option value="lainnya">Lainnya</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="persentase">Persentase Kepentingan:</label>
+                <input type="number" name="persentase" id="persentase" min="1" required>
+            </div>
+            <button type="submit">Tambah Prioritas</button>
+        </form>
+
+        {% if daftar_prioritas %}
+        <div class="priority-list"> 
+            <h2 style="font-size:18px; margin-bottom:10px; text-align: center;">Daftar Prioritas</h2>
+            {% for item in daftar_prioritas %}
+            <div class="priority-item">
+                <span>{{ item.kategori|title }}</span>
+                <span class="priority-level">Prioritas {{ item.prioritas }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
-    {% endfor %}
-
-    <div class="grid grid-cols-2 gap-4">
-      <input type="text" name="kategori_new" placeholder="Kategori Baru" class="border p-2 rounded w-full">
-      <input type="number" name="persen_new" placeholder="%" min="0" max="100" class="border p-2 rounded w-full">
-    </div>
-
-    <div class="text-right">
-      <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Simpan</button>
-    </div>
-  </div>
-</form>
-
-<hr class="my-6">
-<p>Total persentase sebaiknya tidak melebihi 100%.</p>
-
-<script>
-  function hitungTotal() {
-    let total = 0;
-    document.querySelectorAll('input[name^="persen_"]').forEach(input => {
-      total += parseInt(input.value || 0);
-    });
-    let newVal = document.querySelector('input[name="persen_new"]').value;
-    if (newVal) total += parseInt(newVal);
-
-    const warna = total > 100 ? 'text-red-600' : 'text-green-600';
-    document.getElementById('totalPersen').innerHTML = `<strong class="${warna}">${total}%</strong>`;
-  }
-
-  document.querySelectorAll('input').forEach(input => {
-    input.addEventListener('input', hitungTotal);
-  });
-  window.onload = hitungTotal;
-</script>
-
-<p>Total Saat Ini: <span id="totalPersen" class="font-bold"></span></p>
-{% endblock %}
+</body>
+</html>
