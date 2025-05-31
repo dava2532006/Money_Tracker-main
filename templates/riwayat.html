@@ -2,99 +2,484 @@
 <html>
 <head>
     <title>Riwayat Transaksi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f9f9f9;
-            margin: 40px auto;
-            max-width: 700px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
             color: #333;
-            line-height: 1.6;
-            padding: 0 20px;
         }
 
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            font-weight: 700;
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            position: relative;
+            min-height: calc(100vh - 40px);
         }
 
-        a {
-            display: inline-block;
-            margin-bottom: 20px;
+        .header {
+            padding: 30px 25px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 30px;
+            left: 25px;
+            color: white;
             text-decoration: none;
-            color: #3498db;
+            font-size: 20px;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            opacity: 1;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            margin: 0;
+        }
+
+        .content {
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .filter-section {
+            margin-bottom: 25px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .filter-tab {
+            flex: 1;
+            padding: 10px 12px;
+            text-align: center;
+            border-radius: 8px;
+            background: transparent;
+            border: none;
+            color: #666;
+            font-size: 14px;
             font-weight: 600;
-            transition: color 0.3s ease;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        a:hover {
-            color: #2980b9;
+        .filter-tab.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        ul {
-            list-style-type: none;
+        .transactions-list {
+            list-style: none;
             padding: 0;
         }
 
-        li {
-            background: white;
-            padding: 15px 20px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+        .transaction-item {
             display: flex;
-            flex-wrap: wrap;
             align-items: center;
-            gap: 10px;
+            padding: 18px;
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #f0f0f0;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        li strong {
-            color: #e67e22;
-            min-width: 100px;
+        .transaction-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .transaction-item.expense {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .transaction-item.income {
+            border-left: 4px solid #27ae60;
+        }
+
+        .transaction-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
             flex-shrink: 0;
         }
 
-        li span {
+        .expense-icon {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .income-icon {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .food-icon {
+            background: linear-gradient(135deg, #ffa726 0%, #ff7043 100%);
+        }
+
+        .transport-icon {
+            background: linear-gradient(135deg, #42a5f5 0%, #1e88e5 100%);
+        }
+
+        .health-icon {
+            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+        }
+
+        .entertainment-icon {
+            background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%);
+        }
+
+        .other-icon {
+            background: linear-gradient(135deg, #78909c 0%, #546e7a 100%);
+        }
+
+        .transaction-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .transaction-category {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            text-transform: capitalize;
+        }
+
+        .transaction-amount {
+            font-size: 16px;
             font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .transaction-amount.expense {
+            color: #e74c3c;
+        }
+
+        .transaction-amount.income {
             color: #27ae60;
-            min-width: 130px;
-            flex-shrink: 0;
         }
 
-        li em {
+        .transaction-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .transaction-description {
+            font-size: 13px;
+            color: #999;
             font-style: italic;
-            color: #7f8c8d;
+            flex: 1;
+            margin-right: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        /* Highlight keluar transactions */
-        li:has(strong:contains('[keluar]')) {
-            background-color: #fdecea;
+        .transaction-date {
+            font-size: 12px;
+            color: #999;
+            white-space: nowrap;
         }
 
-        /* Note: :has and :contains are not fully supported in all browsers.
-           Instead, we will rely on server side classes or JS if needed */
+        .transaction-type {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .transaction-type.expense {
+            background: #fee;
+            color: #e74c3c;
+        }
+
+        .transaction-type.income {
+            background: #efe;
+            color: #27ae60;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #666;
+        }
+
+        .empty-desc {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .summary-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .summary-stats {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+        }
+
+        .summary-stat {
+            flex: 1;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .summary-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .summary-value.income {
+            color: #27ae60;
+        }
+
+        .summary-value.expense {
+            color: #e74c3c;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+            
+            body {
+                padding: 0;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Riwayat Transaksi</h1>
-    <a href="{{ url_for('dashboard') }}">← Kembali ke Dashboard</a>
-    <ul>
-        {% for t in data %}
-            <li>
-                <strong>[{{ t.tanggal.strftime('%d-%m-%Y') }}]</strong>
-                <span>Rp {{ "{:,.0f}".format(t.jumlah) }}</span>
-                - {{ t.tipe|capitalize }} | Kategori: {{ t.kategori }}
-                {% if t.tipe == 'keluar' %}
-                    - Untuk: <em>{{ t.keterangan }}</em>
+    <div class="container">
+        <div class="header">
+            <a href="{{ url_for('dashboard') }}" class="back-button">
+                🏠
+            </a>
+            <h1 class="page-title">History</h1>
+        </div>
+
+        <div class="content">
+            <!-- Summary Card -->
+            <div class="summary-card">
+                <div class="summary-title">This Amount</div>
+                <div class="summary-stats">
+                    <div class="summary-stat">
+                        <div class="summary-label">Income</div>
+                        <div class="summary-value income">Rp {{ "{:,.0f}".format(pemasukan) if pemasukan else "0" }}</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-label">Expenses</div>
+                        <div class="summary-value expense">Rp {{ "{:,.0f}".format(pengeluaran) if pengeluaran else "0" }}</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="summary-label">Balance</div>
+                        <div class="summary-value">Rp {{ "{:,.0f}".format(saldo) if saldo else "0" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-tabs">
+                    <button class="filter-tab active" onclick="filterTransactions('all')">All</button>
+                    <button class="filter-tab" onclick="filterTransactions('income')">Income</button>
+                    <button class="filter-tab" onclick="filterTransactions('expense')">Expenses</button>
+                </div>
+            </div>
+
+            <!-- Transactions List -->
+            <ul class="transactions-list" id="transactionsList">
+                {% if data %}
+                    {% for t in data %}
+                    <li class="transaction-item {{ 'expense' if t.tipe == 'keluar' else 'income' }}" data-type="{{ t.tipe }}">
+                        <div class="transaction-icon 
+                            {% if t.kategori == 'makanan' %}food-icon
+                            {% elif t.kategori == 'transportasi' %}transport-icon
+                            {% elif t.kategori == 'kesehatan' %}health-icon
+                            {% elif t.kategori == 'hiburan' %}entertainment-icon
+                            {% elif t.tipe == 'masuk' %}income-icon
+                            {% else %}other-icon{% endif %}">
+                            {% if t.kategori == 'makanan' %}🍕
+                            {% elif t.kategori == 'transportasi' %}🚗
+                            {% elif t.kategori == 'kesehatan' %}🏥
+                            {% elif t.kategori == 'hiburan' %}🎮
+                            {% elif t.kategori == 'pakaian' %}👕
+                            {% elif t.kategori == 'pendidikan' %}📚
+                            {% elif t.kategori == 'gaji' %}💰
+                            {% elif t.tipe == 'masuk' %}💵
+                            {% else %}📱{% endif %}
+                        </div>
+                        
+                        <div class="transaction-info">
+                            <div class="transaction-header">
+                                <div class="transaction-category">{{ t.kategori|title }}</div>
+                                <div class="transaction-amount {{ 'expense' if t.tipe == 'keluar' else 'income' }}">
+                                    {{ '-' if t.tipe == 'keluar' else '+' }}Rp {{ "{:,.0f}".format(t.jumlah) }}
+                                </div>
+                            </div>
+                            
+                            <div class="transaction-details">
+                                <div class="transaction-description">
+                                    {{ t.keterangan or 'No description' }}
+                                </div>
+                                <div class="transaction-date">
+                                    {{ t.tanggal.strftime('%d %b') if t.tanggal.strftime else t.tanggal }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="transaction-type {{ 'expense' if t.tipe == 'keluar' else 'income' }}">
+                            {{ 'OUT' if t.tipe == 'keluar' else 'IN' }}
+                        </div>
+                    </li>
+                    {% endfor %}
                 {% else %}
-                    {% if t.keterangan %}
-                        - Catatan: <em>{{ t.keterangan }}</em>
-                    {% endif %}
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <div class="empty-title">Belum Ada Transaksi</div>
+                        <div class="empty-desc">Riwayat transaksi Anda akan muncul di sini setelah Anda mulai menambahkan transaksi.</div>
+                    </div>
                 {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function filterTransactions(type) {
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filter transactions
+            const transactions = document.querySelectorAll('.transaction-item');
+            transactions.forEach(transaction => {
+                const transactionType = transaction.dataset.type;
+                
+                if (type === 'all') {
+                    transaction.style.display = 'flex';
+                } else if (type === 'income' && transactionType === 'masuk') {
+                    transaction.style.display = 'flex';
+                } else if (type === 'expense' && transactionType === 'keluar') {
+                    transaction.style.display = 'flex';
+                } else {
+                    transaction.style.display = 'none';
+                }
+            });
+        }
+
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Calculate and update summary dynamically
+        function updateSummary() {
+            const transactions = document.querySelectorAll('.transaction-item');
+            let totalIncome = 0;
+            let totalExpense = 0;
+
+            transactions.forEach(transaction => {
+                const amountText = transaction.querySelector('.transaction-amount').textContent;
+                const amount = parseFloat(amountText.replace(/[+\-$,]/g, ''));
+                
+                if (transaction.dataset.type === 'masuk') {
+                    totalIncome += amount;
+                } else {
+                    totalExpense += amount;
+                }
+            });
+
+            const balance = totalIncome - totalExpense;
+
+        }
+    </script>
 </body>
 </html>

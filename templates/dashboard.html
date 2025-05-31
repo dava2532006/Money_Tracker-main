@@ -417,19 +417,19 @@
 
         <div class="balance-card">
             <div class="balance-label">Available Balance</div>
-            <div class="balance-amount">${{ "%.2f"|format(saldo/15000) }}</div>
+            <div class="balance-amount">Rp {{ "{:,.0f}".format(saldo) if saldo else "0" }}</div>
         </div>
 
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon income-icon">💰</div>
                 <div class="stat-label">Income</div>
-                <div class="stat-amount">${{ "%.0f"|format(pemasukan/15000) }}</div>
+                <div class="stat-amount">Rp {{ "{:,.0f}".format(pemasukan) if pemasukan else "0" }}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon expense-icon">💸</div>
                 <div class="stat-label">Expenses</div>
-                <div class="stat-amount">${{ "%.0f"|format(pengeluaran/15000) }}</div>
+                <div class="stat-amount">Rp {{ "{:,.0f}".format(pengeluaran) if pengeluaran else "0" }}</div>
             </div>
         </div>
 
@@ -466,7 +466,7 @@
                     <div class="transaction-name">{{ t.kategori|title }}</div>
                     <div class="transaction-desc">{{ t.keterangan or 'No description' }}</div>
                 </div>
-                <div class="transaction-right">
+                <div class="transaction-right"> 
                     <div class="transaction-amount">-${{ "%.0f"|format(t.jumlah/15000) }}</div>
                     <div class="transaction-time">{{ t.tanggal }}</div>
                 </div>
@@ -503,7 +503,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="jumlah">Amount ($):</label>
+                    <label class="form-label" for="jumlah">Amount (Rp):</label>
                     <input type="number" name="jumlah" id="jumlah" class="form-input" required>
                 </div>
 
@@ -516,24 +516,24 @@
             </form>
         </div>
 
-        <!-- Allocation Table -->
-        {% if alokasi %}
-        <div class="allocation-table">
-            <div class="table-header">Budget Allocation</div>
-            {% for a in alokasi %}
-            <div class="allocation-row">
-                <span>{{ a.kategori|title }}</span>
-                <span>{{ a.persen }}%</span>
-                <span>${{ "%.0f"|format(a.jumlah/15000) }}</span>
+            <!-- Allocation Table -->
+            {% if alokasi %}
+            <div class="allocation-table">
+                <div class="table-header">Budget Allocation</div>
+                {% for a in alokasi %}
+                <div class="allocation-row">
+                    <span>{{ a.kategori|title }}</span>
+                    <span>{{ a.persen }}%</span>
+                    <span>${{ "%.0f" }}</span>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+            {% endif %}
         </div>
-        {% endif %}
-    </div>
 
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
-        <a href="#" class="nav-item active">
+        <a href="#" class="nav-item">
             <span class="nav-icon">🏠</span>
             Home
         </a>
