@@ -1,20 +1,118 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Pengeluaran per Kategori</title>
-</head>
-<body>
-    <h1>Pengeluaran per Kategori</h1>
-    <a href="{{ url_for('dashboard') }}">← Kembali ke Dashboard</a>
-    
-    {% if hasil %}
-        <ul>
-            {% for kategori, total in hasil %}
-                <li>{{ kategori|capitalize }}: Rp {{ "{:,.0f}".format(total) }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Belum ada data pengeluaran.</p>
-    {% endif %}
-</body>
-</html>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <div class="form-section"
+        <div class="form-title">Add Transaction</div>
+<style>
+/* Container utama */
+.form-section {
+    background-color: #1f1f1f;
+    padding: 25px;
+    margin: 20px auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    max-width: 500px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Judul form */
+.form-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Group masing-masing field */
+.form-group {
+    margin-bottom: 16px;
+}
+
+/* Label */
+.form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #cccccc;
+}
+
+/* Input dan Select */
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #2c2c2c;
+    color: #ffffff;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: #4e9cff;
+    background-color: #1e1e1e;
+    outline: none;
+}
+
+/* Tombol submit */
+.submit-btn {
+    background-color: #4e9cff;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    font-size: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #3079d7;
+}
+</style>
+
+            <div class="form-title">Add Transaction</div>
+            <form method="POST" action="{{ url_for('tambah_transaksi') }}">
+                <div class="form-group">
+                    <label class="form-label" for="tipe">Type:</label>
+                    <select name="tipe" id="tipe" class="form-select">
+                        <option value="masuk">Income</option>
+                        <option value="keluar">Expense</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="kategori">Category:</label>
+                    <select name="kategori" id="kategori" class="form-select">
+                        <option value="">-- Select Category --</option>
+                        <option value="makanan">Food</option>
+                        <option value="pakaian">Clothing</option>
+                        <option value="kesehatan">Health</option>
+                        <option value="lainnya">Rent</option>
+                        <option value="transportasi">Transportation</option>
+                        <option value="hiburan">Entertainment</option>
+                        <option value="pendidikan">Education</option>
+                        <option value="gaji">Salary</option>
+                        <option value="tabungan">Savings</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="jumlah">Amount (Rp):</label>
+                    <input type="number" name="jumlah" id="jumlah" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="keterangan">Description:</label>
+                    <input type="text" name="keterangan" id="keterangan" class="form-input">
+                </div>
+
+                <button type="submit" class="submit-btn">Save Transaction</button>
+            </form>
+        </div>

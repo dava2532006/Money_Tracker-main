@@ -247,6 +247,13 @@
             margin-bottom: 2px;
         }
 
+        .transaction-nambah {
+            font-size: 16px;
+            font-weight: 700;
+            color: #27ae60;
+            margin-bottom: 2px;
+        }
+
         .transaction-time {
             font-size: 12px;
             color: #999;
@@ -270,6 +277,14 @@
 
         .nav-item {
             text-align: center;
+            color: #999;
+            text-decoration: none;
+            font-size: 12px;
+            transition: color 0.3s;
+        }
+
+        .nah-item {
+            text-align: right;
             color: #999;
             text-decoration: none;
             font-size: 12px;
@@ -435,7 +450,12 @@
 
         <div class="priority-section">
             <div class="priority-header">Your Priority Expenses</div>
-             <a href="{{ url_for('input_prioritas') }}" class="see-all">See All</a>
+            <a href="{{ url_for('atur_Prioritas') }}" class="see-all">
+                See All</a>
+            <a href="{{ url_for('input_prioritas') }}" " class="nah-item">
+            <span class="nav-icon">➕</span>
+            History
+        </a>
             <div class="priority-grid">
                 <div class="priority-item">
                     <div class="priority-icon">🏠</div>
@@ -457,7 +477,6 @@
                 <div class="section-title">Recent Transaction</div>
                 <a href="{{ url_for('riwayat_transaksi') }}" class="see-all">See All</a>
             </div>
-
             {% for t in riwayat[:2] %}
             <div class="transaction-item">
                 <div class="transaction-icon {% if t.kategori == 'makanan' %}shopping-icon{% else %}subscription-icon{% endif %}">
@@ -467,12 +486,15 @@
                     <div class="transaction-name">{{ t.kategori|title }}</div>
                     <div class="transaction-desc">{{ t.keterangan or 'No description' }}</div>
                 </div>
-                <div class="transaction-right"> 
-                    <div class="transaction-amount">-${{ "%.0f"|format(t.jumlah/15000) }}</div>
-                    <div class="transaction-time">{{ t.tanggal }}</div>
+                <div class="transaction-right">
+                    {% if t.tipe == 'masuk' %}
+                        <div class="transaction-nambah">+ Rp {{ "{:,.0f}".format(t.jumlah) }}</div>
+                    {% else %}
+                        <div class="transaction-amount">- Rp {{ "{:,.0f}".format(t.jumlah) }}</div>
+                    {% endif %}
                 </div>
             </div>
-            {% endfor %}
+          {% endfor %}
         </div>
 
         <!-- Form Section (Hidden by default) -->
@@ -517,39 +539,16 @@
             </form>
         </div>
 
-            <!-- Allocation Table -->
-            {% if alokasi %}
-            <div class="allocation-table">
-                <div class="table-header">Budget Allocation</div>
-                {% for a in alokasi %}
-                <div class="allocation-row">
-                    <span>{{ a.kategori|title }}</span>
-                    <span>{{ a.persen }}%</span>
-                    <span>${{ "%.0f" }}</span>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
-
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
         <a href="#" class="nav-item">
             <span class="nav-icon">🏠</span>
             Home
         </a>
+        <button class="add-btn" onclick="toggleForm()">+</button>
         <a href="{{ url_for('riwayat_transaksi') }}" " class="nav-item">
             <span class="nav-icon">🔄</span>
             History
-        </a>
-        <button class="add-btn" onclick="toggleForm()">+</button>
-        <a href="#" class="nav-item">
-            <span class="nav-icon">📊</span>
-            Reports
-        </a>
-        <a href="#" class="nav-item">
-            <span class="nav-icon">⚙️</span>
-            Settings
         </a>
     </div>
 
