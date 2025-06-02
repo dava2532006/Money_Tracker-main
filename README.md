@@ -27,7 +27,7 @@ Dengan Anggota :
 - Flask
 - Flask-SQLAlchemy
 - SQLite (database lokal)
-- HTML & CSS (template menggunakan Jinja2)
+- HTML & CSS
 
 ---
 
