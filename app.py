@@ -104,6 +104,31 @@ def atur_Prioritas():
         })
     return render_template('prioritas.html', hasil_alokasi=hasil_alokasi, saldo=saldo)
 
+@app.route('/grafik-pengeluaran')
+def grafik_pengeluaran():
+    from sqlalchemy import func
+
+    hasil = db.session.query(
+        Transaksi.kategori,
+        func.sum(Transaksi.jumlah)
+    ).filter(
+        Transaksi.tipe == 'keluar'
+    ).group_by(
+        Transaksi.kategori
+    ).order_by(
+        func.sum(Transaksi.jumlah).desc()
+    ).all()
+
+    data_pengeluaran = []
+    for kategori, total in hasil:
+        data_pengeluaran.append({
+            'kategori': kategori,
+            'total': total
+        })
+
+
+    return render_template('grafik_pengeluaran.html', data_pengeluaran=data_pengeluaran)
+
 
 
 if __name__ == '__main__':

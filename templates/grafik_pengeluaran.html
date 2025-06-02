@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafik Pengeluaran</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .expense-list {
+            margin-top: 20px;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            margin-bottom: 12px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .expense-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .expense-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .expense-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .expense-details h3 {
+            font-size: 16px;
+            color: #2d3748;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .expense-details p {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .expense-amount {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e53e3e;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 40px;
+            left: 30px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+        }
+
+        .back-button:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .total-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .total-card h2 {
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .total-card .amount {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        /* Category colors */
+        .makanan { background: #fed7d7; color: #c53030; }
+        .transportasi { background: #bee3f8; color: #2b6cb0; }
+        .hiburan { background: #faf089; color: #b7791f; }
+        .belanja { background: #c6f6d5; color: #2f855a; }
+        .tagihan { background: #e9d8fd; color: #6b46c1; }
+        .kesehatan { background: #fed7e2; color: #b83280; }
+        .lainnya { background: #e2e8f0; color: #4e74b7; }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.history.back()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15,18 9,12 15,6"></polyline>
+        </svg>
+    </button>
+
+    <div class="container">
+        <div class="header">
+            <h1>Grafik Pengeluaran</h1>
+            <p>Analisis pengeluaran berdasarkan kategori</p>
+        </div>
+
+        <div class="total-card">
+            <h2>Total Pengeluaran</h2>
+            <div class="amount">Rp <span id="totalAmount">0</span></div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="expenseChart"></canvas>
+        </div>
+
+        <div class="expense-list" id="expenseList">
+            <!-- Expense items akan diisi oleh JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Data dari database Flask - cara paling sederhana
+        const expenseData = {{ data_pengeluaran | tojson | safe }};
+
+        // Konfigurasi warna untuk setiap kategori
+        const categoryColors = {
+            'Makanan': '#FF6B6B',
+            'Transportasi': '#4ECDC4',
+            'Hiburan': '#45B7D1',
+            'Belanja': '#96CEB4',
+            'Tagihan': '#FECA57',
+            'Kesehatan': '#FF9FF3',
+            'Lainnya': '#95A5A6'
+        };
+
+        const categoryIcons = {
+            'Makanan': '🍽️',
+            'Transportasi': '🚗',
+            'Hiburan': '🎮',
+            'Belanja': '🛍️',
+            'Tagihan': '📋',
+            'Kesehatan': '🏥',
+            'Lainnya': '📦'
+        };
+
+        // Hitung total pengeluaran
+        const totalExpense = expenseData.reduce((sum, item) => sum + item.total, 0);
+        document.getElementById('totalAmount').textContent = totalExpense.toLocaleString('id-ID');
+
+        // Buat chart
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: expenseData.map(item => item.kategori),
+                datasets: [{
+                    data: expenseData.map(item => item.total),
+                    backgroundColor: expenseData.map(item => categoryColors[item.kategori] || categoryColors['Lainnya']),
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed;
+                                const percentage = ((value / totalExpense) * 100).toFixed(1);
+                                return context.label + ': Rp ' + value.toLocaleString('id-ID') + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // Buat daftar pengeluaran
+        function createExpenseList() {
+            const expenseList = document.getElementById('expenseList');
+            
+            expenseData.forEach(item => {
+                const percentage = ((item.total / totalExpense) * 100).toFixed(1);
+                const expenseItem = document.createElement('div');
+                expenseItem.className = 'expense-item';
+                
+                expenseItem.innerHTML = `
+                    <div class="expense-info">
+                        <div class="expense-icon ${item.kategori.toLowerCase()}">
+                            ${categoryIcons[item.kategori] || categoryIcons['Lainnya']}
+                        </div>
+                        <div class="expense-details">
+                            <h3>${item.kategori}</h3>
+                            <p>${percentage}% dari total pengeluaran</p>
+                        </div>
+                    </div>
+                    <div class="expense-amount">
+                        Rp ${item.total.toLocaleString('id-ID')}
+                    </div>
+                `;
+                
+                expenseList.appendChild(expenseItem);
+            });
+        }
+
+        // Inisialisasi
+        createExpenseList();
+    </script>
+</body>
+</html>
